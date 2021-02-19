@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14...3.20)
 
 # ---- Project ----
 
@@ -37,30 +37,24 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES"
 )
 
-#####################################################
-# ---- ISSUE #86 --------
+# FIXME: do it as simple as possible!
+add_subdirectory(lib/kseq)
 
-# Adding kseq [FAILED]
-
-CPMAddPackage(
-  NAME kseq 
-  SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq
-)
-
-if(kseq_ADDED)
-  message("[DEBUG] >>> kseq ADDED FROM ${kseq_SOURCE_DIR}")
-  add_library(kseq INTERFACE)
-  target_include_directories(kseq INTERFACE ${kseq_SOURCE_DIR})
-endif()
-
-#####################################################
+# ##################################################################################################
+# CPMAddPackage(NAME kseq SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq)
+# if(kseq_ADDED)
+# TODO: add this in you lib/kseq dir as CMakeList.txt like this! this is your source, so make a
+# standalone cmake project!
+# message(WARNING "kseq ADDED FROM ${kseq_SOURCE_DIR}")
+# endif()
+# ##################################################################################################
 
 # ---- Add source files ----
 
 # Note: globbing sources is considered bad practice as CMake's generators may not detect new files
 # automatically. Keep that in mind when changing files, or explicitly mention them here.
-file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
+file(GLOB_RECURSE headers CONFIGURE_DEPENDS include/*.h)
+file(GLOB_RECURSE sources CONFIGURE_DEPENDS source/*.cpp)
 
 # ---- Create library ----
 
@@ -74,7 +68,7 @@ set_target_properties(Greeter PROPERTIES CXX_STANDARD 17)
 target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive>")
 
 # Link dependencies
-target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) ## ISSUE #86
+target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) # ISSUE #86
 
 target_include_directories(
   Greeter PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -97,5 +91,5 @@ packageProject(
   INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
   VERSION_HEADER "${VERSION_HEADER_LOCATION}"
   COMPATIBILITY SameMajorVersion
-  DEPENDENCIES "fmt 7.1.3"
+  DEPENDENCIES "fmt 7.1.3; kseq 0.1"
 )
