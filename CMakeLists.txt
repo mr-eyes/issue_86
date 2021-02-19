@@ -49,7 +49,7 @@ CPMAddPackage(
 
 if(kseq_ADDED)
   message("[DEBUG] >>> kseq ADDED FROM ${kseq_SOURCE_DIR}")
-  add_library(kseq INTERFACE)
+  add_library(kseq INTERFACE IMPORTED)
   target_include_directories(kseq INTERFACE ${kseq_SOURCE_DIR})
 endif()
 
@@ -74,7 +74,7 @@ set_target_properties(Greeter PROPERTIES CXX_STANDARD 17)
 target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive>")
 
 # Link dependencies
-target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) ## ISSUE #86
+target_link_libraries(Greeter PUBLIC fmt::fmt kseq) ## ISSUE #86
 
 target_include_directories(
   Greeter PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
@@ -97,5 +97,5 @@ packageProject(
   INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
   VERSION_HEADER "${VERSION_HEADER_LOCATION}"
   COMPATIBILITY SameMajorVersion
-  DEPENDENCIES "fmt 7.1.3"
+  DEPENDENCIES "kseq, fmt 7.1.3"
 )
