@@ -37,6 +37,24 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES"
 )
 
+#####################################################
+# ---- ISSUE #86 --------
+
+# Adding kseq [FAILED]
+
+CPMAddPackage(
+  NAME kseq 
+  SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq
+)
+
+if(kseq_ADDED)
+  message("[DEBUG] >>> kseq ADDED FROM ${kseq_SOURCE_DIR}")
+  add_library(kseq INTERFACE)
+  target_include_directories(kseq INTERFACE ${kseq_SOURCE_DIR})
+endif()
+
+#####################################################
+
 # ---- Add source files ----
 
 # Note: globbing sources is considered bad practice as CMake's generators may not detect new files
@@ -56,7 +74,7 @@ set_target_properties(Greeter PROPERTIES CXX_STANDARD 17)
 target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive>")
 
 # Link dependencies
-target_link_libraries(Greeter PUBLIC fmt::fmt)
+target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) ## ISSUE #86
 
 target_include_directories(
   Greeter PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
