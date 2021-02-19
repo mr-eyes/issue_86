@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.14...3.20)
 
 # ---- Project ----
 
@@ -37,30 +37,19 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES"
 )
 
-#####################################################
-# ---- ISSUE #86 --------
-
-# Adding kseq [FAILED]
-
-CPMAddPackage(
-  NAME kseq 
-  SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq
-)
-
-if(kseq_ADDED)
-  message("[DEBUG] >>> kseq ADDED FROM ${kseq_SOURCE_DIR}")
-  add_library(kseq INTERFACE IMPORTED)
-  target_include_directories(kseq INTERFACE ${kseq_SOURCE_DIR})
-endif()
-
-#####################################################
+# ##################################################################################################
+# EITHER:
+# add_subdirectory(lib/kseq)    # Note: simple and clear! CK
+# OR:
+CPMAddPackage(NAME kseq SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq)
+# ##################################################################################################
 
 # ---- Add source files ----
 
 # Note: globbing sources is considered bad practice as CMake's generators may not detect new files
 # automatically. Keep that in mind when changing files, or explicitly mention them here.
-file(GLOB_RECURSE headers CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/include/*.h")
-file(GLOB_RECURSE sources CONFIGURE_DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp")
+file(GLOB_RECURSE headers CONFIGURE_DEPENDS include/*.h)
+file(GLOB_RECURSE sources CONFIGURE_DEPENDS source/*.cpp)
 
 # ---- Create library ----
 
@@ -74,11 +63,15 @@ set_target_properties(Greeter PROPERTIES CXX_STANDARD 17)
 target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive>")
 
 # Link dependencies
-target_link_libraries(Greeter PUBLIC fmt::fmt kseq) ## ISSUE #86
+
+target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) # you should alway use the namespace variant!
+
+# XXX set(INCLUDE_DESTINATION include) # variation point NO_VERSION_SUFFIX
+set(INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION})
 
 target_include_directories(
   Greeter PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                 $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
+                 $<INSTALL_INTERFACE:${INCLUDE_DESTINATION}>
 )
 
 # ---- Create an installable target ----
@@ -94,8 +87,9 @@ packageProject(
   NAMESPACE ${PROJECT_NAME}
   BINARY_DIR ${PROJECT_BINARY_DIR}
   INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
-  INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
-  VERSION_HEADER "${VERSION_HEADER_LOCATION}"
+  INCLUDE_DESTINATION ${INCLUDE_DESTINATION}
+  VERSION_HEADER ${VERSION_HEADER_LOCATION}
   COMPATIBILITY SameMajorVersion
-  DEPENDENCIES "kseq; fmt 7.1.3"
+  DEPENDENCIES "fmt 7.1.3; kseq 0.1"
+  # XXX NO_VERSION_SUFFIX
 )
