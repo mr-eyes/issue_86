@@ -40,6 +40,7 @@ CPMAddPackage(
 # FIXME: do it as simple as possible!
 add_subdirectory(lib/kseq)
 
+
 # ##################################################################################################
 # CPMAddPackage(NAME kseq SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq)
 # if(kseq_ADDED)
@@ -68,6 +69,7 @@ set_target_properties(Greeter PROPERTIES CXX_STANDARD 17)
 target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive>")
 
 # Link dependencies
+
 target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) # ISSUE #86
 
 target_include_directories(
