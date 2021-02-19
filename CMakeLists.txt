@@ -64,7 +64,7 @@ target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permis
 
 # Link dependencies
 
-target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) # ISSUE #86
+target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) # you should alway use the namespace variant!
 
 # XXX set(INCLUDE_DESTINATION include) # variation point NO_VERSION_SUFFIX
 set(INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION})
