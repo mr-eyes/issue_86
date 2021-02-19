@@ -40,7 +40,6 @@ CPMAddPackage(
 # FIXME: do it as simple as possible!
 add_subdirectory(lib/kseq)
 
-
 # ##################################################################################################
 # CPMAddPackage(NAME kseq SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq)
 # if(kseq_ADDED)
