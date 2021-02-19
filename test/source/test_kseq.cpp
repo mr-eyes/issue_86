@@ -2,5 +2,5 @@
 #include "kseq.h"
 
 TEST_CASE("KSEQ"){
-    CHECK_EQ(KS_SEP_TAB, 1)
+    CHECK_EQ(KS_SEP_TAB, 1);
 }
