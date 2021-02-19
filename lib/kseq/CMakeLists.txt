@@ -30,8 +30,6 @@ CPMAddPackage(
   VERSION 1.5.0
 )
 
-# ##################################################################################################
-
 # ---- Add source files ----
 
 # ---- Create library ----
@@ -40,9 +38,15 @@ add_library(kseq INTERFACE)
 
 set_target_properties(kseq PROPERTIES CXX_STANDARD 17)
 
+# being a cross-platform target, we enforce standards conformance on MSVC
+target_compile_options(kseq INTERFACE "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permissive>")
+
+set(INCLUDE_DESTINATION include) # Note: we use with NO_VERSION_SUFFIX variation
+# XXX set(INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION})
+
 target_include_directories(
   kseq INTERFACE $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                 $<INSTALL_INTERFACE:include/${PROJECT_NAME}>
+                 $<INSTALL_INTERFACE:${INCLUDE_DESTINATION}>
 )
 
 # ---- Create an installable target ----
@@ -58,8 +62,8 @@ packageProject(
   NAMESPACE ${PROJECT_NAME}
   BINARY_DIR ${PROJECT_BINARY_DIR}
   INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
-  INCLUDE_DESTINATION include
-  VERSION_HEADER "${VERSION_HEADER_LOCATION}"
+  INCLUDE_DESTINATION ${INCLUDE_DESTINATION}
+  VERSION_HEADER ${VERSION_HEADER_LOCATION}
   COMPATIBILITY SameMajorVersion
   NO_VERSION_SUFFIX
 )

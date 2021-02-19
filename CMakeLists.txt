@@ -37,16 +37,11 @@ CPMAddPackage(
   OPTIONS "FMT_INSTALL YES"
 )
 
-# FIXME: do it as simple as possible!
-add_subdirectory(lib/kseq)
-
 # ##################################################################################################
-# CPMAddPackage(NAME kseq SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq)
-# if(kseq_ADDED)
-# TODO: add this in you lib/kseq dir as CMakeList.txt like this! this is your source, so make a
-# standalone cmake project!
-# message(WARNING "kseq ADDED FROM ${kseq_SOURCE_DIR}")
-# endif()
+# EITHER:
+# add_subdirectory(lib/kseq)    # Note: simple and clear! CK
+# OR:
+CPMAddPackage(NAME kseq SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/lib/kseq)
 # ##################################################################################################
 
 # ---- Add source files ----
@@ -71,9 +66,12 @@ target_compile_options(Greeter PUBLIC "$<$<COMPILE_LANG_AND_ID:CXX,MSVC>:/permis
 
 target_link_libraries(Greeter PUBLIC fmt::fmt kseq::kseq) # ISSUE #86
 
+# XXX set(INCLUDE_DESTINATION include) # variation point NO_VERSION_SUFFIX
+set(INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION})
+
 target_include_directories(
   Greeter PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-                 $<INSTALL_INTERFACE:include/${PROJECT_NAME}-${PROJECT_VERSION}>
+                 $<INSTALL_INTERFACE:${INCLUDE_DESTINATION}>
 )
 
 # ---- Create an installable target ----
@@ -89,8 +87,9 @@ packageProject(
   NAMESPACE ${PROJECT_NAME}
   BINARY_DIR ${PROJECT_BINARY_DIR}
   INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include
-  INCLUDE_DESTINATION include/${PROJECT_NAME}-${PROJECT_VERSION}
-  VERSION_HEADER "${VERSION_HEADER_LOCATION}"
+  INCLUDE_DESTINATION ${INCLUDE_DESTINATION}
+  VERSION_HEADER ${VERSION_HEADER_LOCATION}
   COMPATIBILITY SameMajorVersion
   DEPENDENCIES "fmt 7.1.3; kseq 0.1"
+  # XXX NO_VERSION_SUFFIX
 )
