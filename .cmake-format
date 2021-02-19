@@ -3,6 +3,9 @@ format:
   line_width: 100
   dangle_parens: true
 
+markup:
+  enable_markup: false
+
 parse:
   additional_commands:
     cpmaddpackage:
@@ -40,10 +43,16 @@ parse:
         flags: []
       spelling: CPMFindPackage
       kwargs: *cpmaddpackagekwargs
-    packageproject:
+    cpmdeclarepackage:
       pargs:
         nargs: '*'
         flags: []
+      spelling: CPMDeclarePackage
+      kwargs: *cpmaddpackagekwargs
+    packageproject:
+      pargs:
+        nargs: '*'
+        flags: [NO_VERSION_SUFFIX]
       spelling: packageProject
       kwargs:
         NAME: 1
@@ -54,4 +63,14 @@ parse:
         BINARY_DIR: 1
         COMPATIBILITY: 1
         VERSION_HEADER: 1
+        EXPORT_HEADER: 1
         DEPENDENCIES: +
+    cpmusepackagelock:
+      pargs: 1
+      spelling: CPMUsePackageLock
+    cpmregisterpackage:
+      pargs: 1
+      spelling: CPMRegisterPackage
+    cpmgetpackageversion:
+      pargs: 2
+      spelling: CPMGetPackageVersion

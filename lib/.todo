@@ -1,0 +1,4 @@
+TBD: add a CMakeLists.txt if you have more subproject
+
+add_subdirectory(kesq)
+add_subdirectory(...)
